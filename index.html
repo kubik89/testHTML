@@ -1,37 +1,62 @@
-function doGet() {
-
-  var folderId = "1r3hmBPm_xmYr4xkzfZrpAXQM_TUnUGqz";
-  var folder = DriveApp.getFolderById(folderId);
-  var files = folder.getFiles();
-
-  var fileArray = [];
-
-  while (files.hasNext()) {
-    var file = files.next();
-    fileArray.push({
-      id: file.getId(),
-      name: file.getName()
-    });
-  }
-
-  fileArray.sort(function(a, b) {
-    return a.name.localeCompare(b.name);
-  });
-
-  var html = "<html><body style='margin:0;font-family:sans-serif'>";
-
-  fileArray.forEach(function(file) {
-
-    var img = "https://lh3.googleusercontent.com/d/" + file.id;
-    var full = "https://drive.google.com/uc?export=view&id=" + file.id;
-
-    html += "<a href='"+full+"' target='_blank'>";
-    html += "<img src='"+img+"' style='width:50%;float: inline-end;'>";
-    html += "</a>";
-    // ;margin:10px;border-radius:8px;
-  });
-
-  html += "</body></html>";
-
-  return HtmlService.createHtmlOutput(html);
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  margin: 0;
+  font-family: sans-serif;
 }
+
+.gallery {
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 900px) {
+  .gallery { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .gallery { grid-template-columns: repeat(2, 1fr); }
+}
+
+img {
+  width: 100%;
+  border-radius: 8px;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="gallery" id="gallery"></div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbwYfXkzr8hD47hbCvp1fLEx90JvYhedUjv9fk2wjcy9FeXcqcP0il-7VU1e38TZFL79nA/exec";
+
+fetch(API_URL)
+  .then(res => res.json())
+  .then(data => {
+
+    const gallery = document.getElementById("gallery");
+
+    data.forEach(file => {
+      const img = document.createElement("img");
+      img.src = file.url;
+
+      img.onclick = () => {
+        window.open(file.url, "_blank");
+      };
+
+      gallery.appendChild(img);
+    });
+
+  });
+</script>
+
+</body>
+</html>
