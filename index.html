@@ -30,32 +30,30 @@ img {
 }
 </style>
 </head>
-
 <body>
 
 <div class="gallery" id="gallery"></div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbxlR_FFAWBRDjpVS-d_hSXTaBkavKMaKdJj5Unu4v56uoeKqfKN73pYmv9k5MQRtX_DVg/exec";
+function renderGallery(data) {
+  const gallery = document.getElementById("gallery");
 
-fetch(API_URL)
-  .then(res => res.json())
-  .then(data => {
+  data.forEach(file => {
+    const img = document.createElement("img");
+    img.src = file.url;
 
-    const gallery = document.getElementById("gallery");
+    img.onclick = () => {
+      window.open(file.url, "_blank");
+    };
 
-    data.forEach(file => {
-      const img = document.createElement("img");
-      img.src = file.url;
-
-      img.onclick = () => {
-        window.open(file.url, "_blank");
-      };
-
-      gallery.appendChild(img);
-    });
-
+    gallery.appendChild(img);
   });
+}
+
+// Підключаємо GAS як JSONP
+const script = document.createElement('script');
+script.src = "https://script.google.com/macros/s/AKfycbyszwb1B4KK5kOrE9L1oYbRYwOQqs88OYWR7uYAZ6XgDOBiVBWAg3LKxE2hdgFtibuL/exec?callback=renderGallery";
+document.body.appendChild(script);
 </script>
 
 </body>
