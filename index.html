@@ -1,0 +1,37 @@
+function doGet() {
+
+  var folderId = "1r3hmBPm_xmYr4xkzfZrpAXQM_TUnUGqz";
+  var folder = DriveApp.getFolderById(folderId);
+  var files = folder.getFiles();
+
+  var fileArray = [];
+
+  while (files.hasNext()) {
+    var file = files.next();
+    fileArray.push({
+      id: file.getId(),
+      name: file.getName()
+    });
+  }
+
+  fileArray.sort(function(a, b) {
+    return a.name.localeCompare(b.name);
+  });
+
+  var html = "<html><body style='margin:0;font-family:sans-serif'>";
+
+  fileArray.forEach(function(file) {
+
+    var img = "https://lh3.googleusercontent.com/d/" + file.id;
+    var full = "https://drive.google.com/uc?export=view&id=" + file.id;
+
+    html += "<a href='"+full+"' target='_blank'>";
+    html += "<img src='"+img+"' style='width:50%;float: inline-end;'>";
+    html += "</a>";
+    // ;margin:10px;border-radius:8px;
+  });
+
+  html += "</body></html>";
+
+  return HtmlService.createHtmlOutput(html);
+}
